@@ -28,25 +28,29 @@ services:
       DATABASE_URL: postgresql://notes_user:notes_password@db:5432/notes_db
       CORS_ORIGIN: http://localhost:3000
       LOG_LEVEL: info
-    ports:
-      - "3000:3000"
     depends_on:
       db:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
   
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      args:
+        API_URL: http://api:3000/api
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
   dozzle:
     image: amir20/dozzle:latest
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       DOZZLE_ENABLE_ACTIONS: false
       DOZZLE_NO_ANALYTICS: true

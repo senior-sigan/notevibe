@@ -19,15 +19,6 @@ app.use(pinoHttp({ logger })); // Logging
 app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
-});
-
 // API routes
 app.use('/api', routes);
 
@@ -60,7 +51,7 @@ const initializeServer = async () => {
     // Start server
     app.listen(PORT, () => {
       logger.info(`🚀 Server is running on port ${PORT}`);
-      logger.info(`📊 Health check: http://localhost:${PORT}/health`);
+      logger.info(`📊 Health check: http://localhost:${PORT}/api/health`);
       logger.info(`🔗 API endpoint: http://localhost:${PORT}/api`);
       logger.info(`🗄️  Database: PostgreSQL connected successfully`);
     });
