@@ -1,14 +1,17 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import pino from 'pino'
+
+const logger = pino();
 
 // Request logging middleware
 export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  logger.info(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 };
 
 // Error handling middleware
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error('Error:', err);
+  logger.error(err);
   
   res.status(500).json({
     success: false,
@@ -29,13 +32,13 @@ export const notFound = (req: Request, res: Response) => {
 // Authentication middleware (placeholder)
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   // TODO: Implement JWT authentication
-  console.log('Authentication middleware - not implemented yet');
+  logger.warn('Authentication middleware - not implemented yet');
   next();
 };
 
 // Rate limiting middleware (placeholder)
 export const rateLimit = (req: Request, res: Response, next: NextFunction) => {
   // TODO: Implement rate limiting
-  console.log('Rate limiting middleware - not implemented yet');
+  logger.warn('Rate limiting middleware - not implemented yet');
   next();
 };

@@ -1,4 +1,7 @@
 import { query } from '../config/database.ts';
+import pino from 'pino'
+
+const logger = pino();
 
 // Create users table
 export const createUsersTable = async (): Promise<void> => {
@@ -15,9 +18,9 @@ export const createUsersTable = async (): Promise<void> => {
 
   try {
     await query(createUsersTableQuery);
-    console.log('✅ Users table created successfully');
+    logger.info('✅ Users table created successfully');
   } catch (error) {
-    console.error('❌ Error creating users table:', error);
+    logger.error({ err }, '❌ Error creating users table');
     throw error;
   }
 };
@@ -38,10 +41,10 @@ export const createNotesTable = async (): Promise<void> => {
 
   try {
     await query(createNotesTableQuery);
-    console.log('✅ Notes table created successfully');
-  } catch (error) {
-    console.error('❌ Error creating notes table:', error);
-    throw error;
+    logger.info('✅ Notes table created successfully');
+  } catch (err) {
+    logger.error({ err }, '❌ Error creating notes table');
+    throw err;
   }
 };
 
@@ -59,10 +62,10 @@ export const createUpdatedAtTrigger = async (): Promise<void> => {
 
   try {
     await query(createTriggerFunctionQuery);
-    console.log('✅ Updated at trigger function created successfully');
-  } catch (error) {
-    console.error('❌ Error creating trigger function:', error);
-    throw error;
+    logger.info('✅ Updated at trigger function created successfully');
+  } catch (err) {
+    logger.error({ err }, '❌ Error creating trigger function');
+    throw err;
   }
 };
 
@@ -87,24 +90,24 @@ export const createTriggers = async (): Promise<void> => {
   try {
     await query(createUsersTriggerQuery);
     await query(createNotesTriggerQuery);
-    console.log('✅ Triggers created successfully');
-  } catch (error) {
-    console.error('❌ Error creating triggers:', error);
-    throw error;
+    logger.info('✅ Triggers created successfully');
+  } catch (err) {
+    logger.error({ err }, '❌ Error creating triggers');
+    throw err;
   }
 };
 
 // Run all migrations
 export const runMigrations = async (): Promise<void> => {
   try {
-    console.log('🔄 Running database migrations...');
+    logger.info('🔄 Running database migrations...');
     await createUsersTable();
     await createNotesTable();
     await createUpdatedAtTrigger();
     await createTriggers();
-    console.log('✅ All migrations completed successfully');
-  } catch (error) {
-    console.error('❌ Migration failed:', error);
-    throw error;
+    logger.info('✅ All migrations completed successfully');
+  } catch (err) {
+    logger.error({ err }, '❌ Migration failed');
+    throw err;
   }
 };

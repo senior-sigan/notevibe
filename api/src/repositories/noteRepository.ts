@@ -16,7 +16,7 @@ export class NoteRepository {
       const result = await query(createNoteQuery, [userId, title, content, is_public]);
       return result.rows[0];
     } catch (error) {
-      throw new Error('Failed to create note');
+      throw new Error('Failed to create note', { cause: error });
     }
   }
 
@@ -47,7 +47,7 @@ export class NoteRepository {
       const result = await query(findNoteQuery, params);
       return result.rows[0] || null;
     } catch (error) {
-      throw new Error('Failed to find note');
+      throw new Error('Failed to find note', { cause: error });
     }
   }
 
@@ -64,7 +64,7 @@ export class NoteRepository {
       const result = await query(findNotesQuery, [userId]);
       return result.rows;
     } catch (error) {
-      throw new Error('Failed to fetch user notes');
+      throw new Error('Failed to fetch user notes', { cause: error });
     }
   }
 
@@ -81,7 +81,7 @@ export class NoteRepository {
       const result = await query(findPublicNotesQuery);
       return result.rows;
     } catch (error) {
-      throw new Error('Failed to fetch public notes');
+      throw new Error('Failed to fetch public notes', { cause: error });
     }
   }
 
@@ -104,7 +104,7 @@ export class NoteRepository {
       const result = await query(updateNoteQuery, values);
       return result.rows[0] || null;
     } catch (error) {
-      throw new Error('Failed to update note');
+      throw new Error('Failed to update note', { cause: error });
     }
   }
 
@@ -119,7 +119,7 @@ export class NoteRepository {
       const result = await query(deleteNoteQuery, [id, userId]);
       return result.rowCount > 0;
     } catch (error) {
-      throw new Error('Failed to delete note');
+      throw new Error('Failed to delete note', { cause: error });
     }
   }
 
@@ -154,7 +154,7 @@ export class NoteRepository {
       const result = await query(searchQuery, params);
       return result.rows;
     } catch (error) {
-      throw new Error('Failed to search notes');
+      throw new Error('Failed to search notes', { cause: error });
     }
   }
 
@@ -170,7 +170,7 @@ export class NoteRepository {
       const result = await query(countQuery, [userId]);
       return parseInt(result.rows[0].count);
     } catch (error) {
-      throw new Error('Failed to count user notes');
+      throw new Error('Failed to count user notes', { cause: error });
     }
   }
 }

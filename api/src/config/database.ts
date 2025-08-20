@@ -1,4 +1,7 @@
 import { Pool, type PoolConfig } from 'pg';
+import pino from 'pino'
+
+const logger = pino();
 
 const dbConfig: PoolConfig = {
   connectionString: process.env['DATABASE_URL'],
@@ -12,7 +15,7 @@ const pool = new Pool(dbConfig);
 
 // Handle pool errors
 pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
+  logger.error({ err }, 'Unexpected error on idle client');
   process.exit(-1);
 });
 
@@ -20,10 +23,10 @@ pool.on('error', (err) => {
 export const testConnection = async (): Promise<void> => {
   try {
     const client = await pool.connect();
-    console.log('✅ Database connection successful');
+    logger.info('✅ Database connection successful');
     client.release();
   } catch (err) {
-    console.error('❌ Database connection failed:', err);
+    logger.info({ err }, '❌ Database connection failed');
     throw err;
   }
 };

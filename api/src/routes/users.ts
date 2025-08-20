@@ -2,7 +2,9 @@ import { Router } from 'express';
 import { UserRepository } from '../repositories/userRepository.ts';
 import { hashPassword } from '../utils/password.ts';
 import type { CreateUserRequest } from '../types/database.ts';
+import pino from 'pino'
 
+const logger = pino();
 const router = Router();
 
 // Create a new user
@@ -40,6 +42,7 @@ router.post('/register', async (req, res) => {
       user
     });
   } catch (error: any) {
+    logger.error(error);
     if (error.message.includes('already exists')) {
       return res.status(409).json({
         error: 'Conflict',
@@ -77,6 +80,7 @@ router.get('/:id', async (req, res) => {
 
     res.json({ user });
   } catch (error) {
+    logger.error(error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to fetch user'
@@ -90,6 +94,7 @@ router.get('/', async (req, res) => {
     const users = await UserRepository.findAll();
     res.json({ users });
   } catch (error) {
+    logger.error(error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to fetch users'
@@ -136,6 +141,7 @@ router.put('/:id', async (req, res) => {
       user
     });
   } catch (error: any) {
+    logger.error(error);
     if (error.message.includes('already exists')) {
       return res.status(409).json({
         error: 'Conflict',
@@ -175,6 +181,7 @@ router.delete('/:id', async (req, res) => {
       message: 'User deleted successfully'
     });
   } catch (error) {
+    logger.error(error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to delete user'

@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 
 // Error handler
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
+  logger.error(err);
   res.status(500).json({ 
     error: 'Internal Server Error',
     message: process.env['NODE_ENV'] === 'development' ? err.message : 'Something went wrong'
@@ -55,8 +55,8 @@ const initializeServer = async () => {
       logger.info(`🔗 API endpoint: http://localhost:${PORT}/api`);
       logger.info(`🗄️  Database: PostgreSQL connected successfully`);
     });
-  } catch (error: unknown) {
-    console.error('❌ Failed to initialize server:', error);
+  } catch (err) {
+    logger.error({ err }, '❌ Failed to initialize server');
     process.exit(1);
   }
 };

@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { NoteRepository } from '../repositories/noteRepository.ts';
 import type { CreateNoteRequest, UpdateNoteRequest } from '../types/database.ts';
+import pino from 'pino'
 
+const logger = pino();
 const router = Router();
 
 // Create a new note
@@ -32,6 +34,7 @@ router.post('/', async (req, res) => {
       note
     });
   } catch (error) {
+    logger.error(error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to create note'
@@ -49,6 +52,7 @@ router.get('/my', async (req, res) => {
     const notes = await NoteRepository.findByUserId(userId);
     res.json({ notes });
   } catch (error) {
+    logger.error(error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to fetch notes'
@@ -62,6 +66,7 @@ router.get('/public', async (req, res) => {
     const notes = await NoteRepository.findPublicNotes();
     res.json({ notes });
   } catch (error) {
+    logger.error(error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to fetch public notes'
@@ -96,6 +101,7 @@ router.get('/:id', async (req, res) => {
 
     res.json({ note });
   } catch (error) {
+    logger.error(error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to fetch note'
@@ -141,6 +147,7 @@ router.put('/:id', async (req, res) => {
       note
     });
   } catch (error) {
+    logger.error(error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to update note'
@@ -177,6 +184,7 @@ router.delete('/:id', async (req, res) => {
       message: 'Note deleted successfully'
     });
   } catch (error) {
+    logger.error(error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to delete note'
@@ -203,6 +211,7 @@ router.get('/search/:query', async (req, res) => {
     const notes = await NoteRepository.search(query, userId);
     res.json({ notes });
   } catch (error) {
+    logger.error(error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to search notes'

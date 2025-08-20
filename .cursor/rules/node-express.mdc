@@ -84,7 +84,9 @@ globs: api/src/**/*.ts
 - Use proper logging
 - Handle process signals properly
 - Document code properly
+- Log exceptions in routers
+- When rethrow exception pass cause
 
 ## Libraries
-- Use pino logger
+- Use pino logger instead of console.log
 - Use zod for validation
