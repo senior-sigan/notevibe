@@ -1,0 +1,8 @@
+---
+description: Node.js libraries usage limitations
+alwaysApply: false
+---
+
+- For validation use zod
+- DO NOT use dotenv library. Variables would be passed via `node --env-file`
+- do not use lodash, underscore
