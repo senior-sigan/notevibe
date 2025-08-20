@@ -1,16 +1,12 @@
 import { Router } from 'express';
+import usersRoutes from './users';
+import notesRoutes from './notes';
 
 const router = Router();
 
-// Import route modules (will be created later)
-// import authRoutes from './auth';
-// import notesRoutes from './notes';
-// import usersRoutes from './users';
-
 // Mount routes
-// router.use('/auth', authRoutes);
-// router.use('/notes', notesRoutes);
-// router.use('/users', usersRoutes);
+router.use('/users', usersRoutes);
+router.use('/notes', notesRoutes);
 
 // Base API route
 router.get('/', (req, res) => {
