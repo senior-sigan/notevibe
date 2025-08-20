@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { UserRepository } from '../repositories/userRepository';
-import { hashPassword } from '../utils/password';
-import { CreateUserRequest } from '../types/database';
+import { UserRepository } from '../repositories/userRepository.ts';
+import { hashPassword } from '../utils/password.ts';
+import type { CreateUserRequest } from '../types/database.ts';
 
 const router = Router();
 

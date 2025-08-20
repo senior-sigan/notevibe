@@ -1,5 +1,5 @@
-import { query } from '../config/database';
-import { Note, CreateNoteRequest, UpdateNoteRequest, NoteResponse } from '../types/database';
+import { query } from '../config/database.ts';
+import type { Note, CreateNoteRequest, UpdateNoteRequest, NoteResponse } from '../types/database.ts';
 
 export class NoteRepository {
   // Create a new note

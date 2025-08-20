@@ -3,9 +3,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 import pino from 'pino'
 import pinoHttp from 'pino-http'
-import { testConnection } from './config/database';
-import { runMigrations } from './database/migrations';
-import routes from './routes';
+import { testConnection } from './config/database.ts';
+import { runMigrations } from './database/migrations.ts';
+import routes from './routes/index.ts';
 
 const logger = pino();
 

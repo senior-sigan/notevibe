@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "node src/index.ts | pino-pretty",
+    "dev": "node --env-file .env src/index.ts | pino-pretty",
     "start": "node src/index.ts",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix"

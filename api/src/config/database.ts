@@ -1,4 +1,4 @@
-import { Pool, PoolConfig } from 'pg';
+import { Pool, type PoolConfig } from 'pg';
 
 const dbConfig: PoolConfig = {
   connectionString: process.env['DATABASE_URL'],

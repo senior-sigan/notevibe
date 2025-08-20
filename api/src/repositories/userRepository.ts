@@ -1,5 +1,5 @@
-import { query } from '../config/database';
-import { User, CreateUserRequest, UserResponse } from '../types/database';
+import { query } from '../config/database.ts';
+import type { User, CreateUserRequest, UserResponse } from '../types/database.ts';
 
 export class UserRepository {
   // Create a new user

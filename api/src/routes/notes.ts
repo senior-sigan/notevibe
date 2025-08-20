@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { NoteRepository } from '../repositories/noteRepository';
-import { CreateNoteRequest, UpdateNoteRequest } from '../types/database';
+import { NoteRepository } from '../repositories/noteRepository.ts';
+import type { CreateNoteRequest, UpdateNoteRequest } from '../types/database.ts';
 
 const router = Router();
 

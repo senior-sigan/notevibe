@@ -84,3 +84,7 @@ globs: api/src/**/*.ts
 - Use proper logging
 - Handle process signals properly
 - Document code properly
+
+## Libraries
+- Use pino logger
+- Use zod for validation

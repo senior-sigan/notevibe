@@ -1,4 +1,4 @@
-import { query } from '../config/database';
+import { query } from '../config/database.ts';
 
 // Create users table
 export const createUsersTable = async (): Promise<void> => {

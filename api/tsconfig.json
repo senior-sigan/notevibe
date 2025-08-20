@@ -1,29 +1,51 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "commonjs",
-    "lib": ["ES2022"],
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "lib": ["ES2024"],
+    "target": "ES2024",
+
+    // Treat files as modules even if it doesn't use import/export
+    "moduleDetection": "force",
+
+    // Ignore module structure
+    "module": "Preserve",
+
+    // Allow JSON modules to be imported
     "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "removeComments": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+
+    // Allow JS files to be imported from TS and vice versa
+    "allowJs": true,
+    "checkJs": true,
+
+    "skipLibCheck": true,
+
+    // Use correct ESM import behavior
+    "esModuleInterop": true,
+
+    // Disallow features that require cross-file awareness
+    "isolatedModules": true,
+
+    // requires to write type imports
+    "verbatimModuleSyntax": true,
+
+    // since 32 node supports typescript but requires file ext imports
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+
+    "strictNullChecks": true,
     "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+    "noUncheckedIndexedAccess": true,
+    "noUncheckedSideEffectImports": true,
+
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true
+  }
 }
