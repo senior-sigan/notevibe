@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { UserRepository } from '../repositories/userRepository.ts';
-import { hashPassword } from '../utils/password.ts';
+import { hashPassword, verifyPassword } from '../utils/password.ts';
 import type { CreateUserRequest } from '../types/database.ts';
 import pino from 'pino'
 
@@ -53,6 +53,53 @@ router.post('/register', async (req, res) => {
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to create user'
+    });
+  }
+});
+
+// Login user
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({
+        error: 'Validation Error',
+        message: 'Email and password are required'
+      });
+    }
+
+    // Find user by email
+    const user = await UserRepository.findByEmail(email);
+    
+    if (!user) {
+      return res.status(401).json({
+        error: 'Authentication Error',
+        message: 'Invalid email or password'
+      });
+    }
+
+    // Verify password
+    if (!verifyPassword(password, user.password_hash)) {
+      return res.status(401).json({
+        error: 'Authentication Error',
+        message: 'Invalid email or password'
+      });
+    }
+
+    // Return user data (without password)
+    const { password_hash, ...userData } = user;
+    
+    res.json({
+      message: 'Login successful',
+      user: userData
+    });
+  } catch (error: any) {
+    logger.error(error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to login'
     });
   }
 });
