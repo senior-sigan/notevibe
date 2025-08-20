@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16-alpine
@@ -41,6 +39,17 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+  
+  dozzle:
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "8080:8080"
+    environment:
+      DOZZLE_ENABLE_ACTIONS: false
+      DOZZLE_NO_ANALYTICS: true
 
 volumes:
   postgres_data:
