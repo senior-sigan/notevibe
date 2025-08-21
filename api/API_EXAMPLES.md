@@ -1,21 +1,20 @@
-# API Usage Examples
+# Примеры использования API
 
-## Users API
+## Аутентификация
 
-### Register a new user
+### 1. Регистрация пользователя
 
 ```bash
-curl -X POST http://localhost:3000/api/users/register \
+curl -X POST http://localhost:4000/api/users/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "john_doe",
     "email": "john@example.com",
-    "password": "password123"
+    "password": "securepassword123"
   }'
 ```
 
-Response:
-
+**Ответ:**
 ```json
 {
   "message": "User created successfully",
@@ -23,408 +22,306 @@ Response:
     "id": 1,
     "username": "john_doe",
     "email": "john@example.com",
-    "created_at": "2024-01-15T10:30:00.000Z",
-    "updated_at": "2024-01-15T10:30:00.000Z"
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
   }
 }
 ```
 
-### Get user by ID
+### 2. Вход в систему
 
 ```bash
-curl http://localhost:3000/api/users/1
+curl -X POST http://localhost:4000/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john@example.com",
+    "password": "securepassword123"
+  }'
 ```
 
-Response:
-
+**Ответ:**
 ```json
 {
+  "message": "Login successful",
   "user": {
     "id": 1,
     "username": "john_doe",
     "email": "john@example.com",
-    "created_at": "2024-01-15T10:30:00.000Z",
-    "updated_at": "2024-01-15T10:30:00.000Z"
-  }
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
-### Get all users
+## Работа с заметками
+
+### 3. Создание заметки (требует аутентификации)
 
 ```bash
-curl http://localhost:3000/api/users
-```
-
-Response:
-
-```json
-{
-  "users": [
-    {
-      "id": 1,
-      "username": "john_doe",
-      "email": "john@example.com",
-      "created_at": "2024-01-15T10:30:00.000Z",
-      "updated_at": "2024-01-15T10:30:00.000Z"
-    }
-  ]
-}
-```
-
-### Update user
-
-```bash
-curl -X PUT http://localhost:3000/api/users/1 \
+curl -X POST http://localhost:4000/api/notes \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
-    "username": "john_updated",
-    "email": "john.updated@example.com"
-  }'
-```
-
-Response:
-
-```json
-{
-  "message": "User updated successfully",
-  "user": {
-    "id": 1,
-    "username": "john_updated",
-    "email": "john.updated@example.com",
-    "created_at": "2024-01-15T10:30:00.000Z",
-    "updated_at": "2024-01-15T11:00:00.000Z"
-  }
-}
-```
-
-### Delete user
-
-```bash
-curl -X DELETE http://localhost:3000/api/users/1
-```
-
-Response:
-
-```json
-{
-  "message": "User deleted successfully"
-}
-```
-
-## Notes API
-
-### Create a new note
-
-```bash
-curl -X POST http://localhost:3000/api/notes \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "My First Note",
-    "content": "This is the content of my first note.",
+    "title": "Моя первая заметка",
+    "content": "Содержание заметки",
     "is_public": false
   }'
 ```
 
-Response:
-
+**Ответ:**
 ```json
 {
   "message": "Note created successfully",
   "note": {
     "id": 1,
     "user_id": 1,
-    "title": "My First Note",
-    "content": "This is the content of my first note.",
+    "title": "Моя первая заметка",
+    "content": "Содержание заметки",
     "is_public": false,
-    "created_at": "2024-01-15T10:30:00.000Z",
-    "updated_at": "2024-01-15T10:30:00.000Z"
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
   }
 }
 ```
 
-### Create a public note
+### 4. Получение заметок пользователя (требует аутентификации)
 
 ```bash
-curl -X POST http://localhost:3000/api/notes \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Public Note",
-    "content": "This note is public and can be viewed by anyone.",
-    "is_public": true
-  }'
+curl -X GET http://localhost:4000/api/notes/my \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
-### Get user's notes
-
-```bash
-curl http://localhost:3000/api/notes/my
-```
-
-Response:
-
+**Ответ:**
 ```json
 {
   "notes": [
-    {
-      "id": 2,
-      "user_id": 1,
-      "title": "Public Note",
-      "content": "This note is public and can be viewed by anyone.",
-      "is_public": true,
-      "created_at": "2024-01-15T10:35:00.000Z",
-      "updated_at": "2024-01-15T10:35:00.000Z"
-    },
     {
       "id": 1,
       "user_id": 1,
-      "title": "My First Note",
-      "content": "This is the content of my first note.",
+      "title": "Моя первая заметка",
+      "content": "Содержание заметки",
       "is_public": false,
-      "created_at": "2024-01-15T10:30:00.000Z",
-      "updated_at": "2024-01-15T10:30:00.000Z"
+      "created_at": "2024-01-01T00:00:00.000Z",
+      "updated_at": "2024-01-01T00:00:00.000Z"
     }
   ]
 }
 ```
 
-### Get public notes
+### 5. Получение публичных заметок (не требует аутентификации)
 
 ```bash
-curl http://localhost:3000/api/notes/public
+curl -X GET http://localhost:4000/api/notes/public
 ```
 
-Response:
-
+**Ответ:**
 ```json
 {
   "notes": [
     {
       "id": 2,
       "user_id": 1,
-      "title": "Public Note",
-      "content": "This note is public and can be viewed by anyone.",
+      "title": "Публичная заметка",
+      "content": "Эта заметка видна всем",
       "is_public": true,
-      "created_at": "2024-01-15T10:35:00.000Z",
-      "updated_at": "2024-01-15T10:35:00.000Z"
+      "created_at": "2024-01-01T00:00:00.000Z",
+      "updated_at": "2024-01-01T00:00:00.000Z"
     }
   ]
 }
 ```
 
-### Get note by ID
+### 6. Обновление заметки (требует аутентификации)
 
 ```bash
-curl http://localhost:3000/api/notes/1
-```
-
-Response:
-
-```json
-{
-  "note": {
-    "id": 1,
-    "user_id": 1,
-    "title": "My First Note",
-    "content": "This is the content of my first note.",
-    "is_public": false,
-    "created_at": "2024-01-15T10:30:00.000Z",
-    "updated_at": "2024-01-15T10:30:00.000Z"
-  }
-}
-```
-
-### Update note
-
-```bash
-curl -X PUT http://localhost:3000/api/notes/1 \
+curl -X PUT http://localhost:4000/api/notes/1 \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
-    "title": "Updated Note Title",
-    "content": "This is the updated content of my note.",
-    "is_public": true
+    "title": "Обновленный заголовок",
+    "content": "Обновленное содержание"
   }'
 ```
 
-Response:
-
+**Ответ:**
 ```json
 {
   "message": "Note updated successfully",
   "note": {
     "id": 1,
     "user_id": 1,
-    "title": "Updated Note Title",
-    "content": "This is the updated content of my note.",
-    "is_public": true,
-    "created_at": "2024-01-15T10:30:00.000Z",
-    "updated_at": "2024-01-15T11:00:00.000Z"
+    "title": "Обновленный заголовок",
+    "content": "Обновленное содержание",
+    "is_public": false,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
   }
 }
 ```
 
-### Delete note
+### 7. Удаление заметки (требует аутентификации)
 
 ```bash
-curl -X DELETE http://localhost:3000/api/notes/1
+curl -X DELETE http://localhost:4000/api/notes/1 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
-Response:
-
+**Ответ:**
 ```json
 {
   "message": "Note deleted successfully"
 }
 ```
 
-### Search notes
+### 8. Поиск заметок (требует аутентификации)
 
 ```bash
-curl http://localhost:3000/api/notes/search/note
+curl -X GET http://localhost:4000/api/notes/search/заметка \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
-Response:
-
+**Ответ:**
 ```json
 {
   "notes": [
     {
-      "id": 2,
+      "id": 1,
       "user_id": 1,
-      "title": "Public Note",
-      "content": "This note is public and can be viewed by anyone.",
-      "is_public": true,
-      "created_at": "2024-01-15T10:35:00.000Z",
-      "updated_at": "2024-01-15T10:35:00.000Z"
+      "title": "Моя первая заметка",
+      "content": "Содержание заметки",
+      "is_public": false,
+      "created_at": "2024-01-01T00:00:00.000Z",
+      "updated_at": "2024-01-01T00:00:00.000Z"
     }
   ]
 }
 ```
 
-## Error Responses
+## Обработка ошибок
 
-### Validation Error
+### Ошибка аутентификации
 
+```bash
+curl -X POST http://localhost:4000/api/notes \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Заметка без токена"}'
+```
+
+**Ответ:**
+```json
+{
+  "error": "Authentication Error",
+  "message": "Authorization header is required"
+}
+```
+
+### Ошибка валидации
+
+```bash
+curl -X POST http://localhost:4000/api/notes \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{"content": "Заметка без заголовка"}'
+```
+
+**Ответ:**
 ```json
 {
   "error": "Validation Error",
-  "message": "Username, email, and password are required"
+  "message": "Title is required"
 }
 ```
 
-### Not Found
+## JavaScript/Node.js примеры
 
-```json
-{
-  "error": "Not Found",
-  "message": "User not found"
-}
-```
-
-### Conflict (Duplicate Entry)
-
-```json
-{
-  "error": "Conflict",
-  "message": "Username already exists"
-}
-```
-
-### Internal Server Error
-
-```json
-{
-  "error": "Internal Server Error",
-  "message": "Failed to create user"
-}
-```
-
-## Using with JavaScript/TypeScript
-
-### Fetch API Example
+### Использование с fetch
 
 ```javascript
-// Create a new user
-const createUser = async (userData) => {
-  const response = await fetch('http://localhost:3000/api/users/register', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userData),
-  });
-  
-  return response.json();
-};
+// Регистрация
+const registerResponse = await fetch('http://localhost:4000/api/users/register', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    username: 'john_doe',
+    email: 'john@example.com',
+    password: 'securepassword123'
+  })
+});
 
-// Create a new note
-const createNote = async (noteData) => {
-  const response = await fetch('http://localhost:3000/api/notes', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(noteData),
-  });
-  
-  return response.json();
-};
+const { user } = await registerResponse.json();
 
-// Usage
-createUser({
-  username: 'john_doe',
-  email: 'john@example.com',
-  password: 'password123'
-}).then(result => console.log(result));
+// Вход
+const loginResponse = await fetch('http://localhost:4000/api/users/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    email: 'john@example.com',
+    password: 'securepassword123'
+  })
+});
 
-createNote({
-  title: 'My Note',
-  content: 'Note content',
-  is_public: false
-}).then(result => console.log(result));
+const { token } = await loginResponse.json();
+
+// Создание заметки
+const createNoteResponse = await fetch('http://localhost:4000/api/notes', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  },
+  body: JSON.stringify({
+    title: 'Моя заметка',
+    content: 'Содержание',
+    is_public: false
+  })
+});
+
+const { note } = await createNoteResponse.json();
 ```
 
-### Axios Example
+### Использование с axios
 
 ```javascript
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: 'http://localhost:4000/api'
 });
 
-// Users
-const users = {
-  register: (userData) => api.post('/users/register', userData),
-  getById: (id) => api.get(`/users/${id}`),
-  getAll: () => api.get('/users'),
-  update: (id, updates) => api.put(`/users/${id}`, updates),
-  delete: (id) => api.delete(`/users/${id}`),
-};
+// Добавление токена к запросам
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-// Notes
-const notes = {
-  create: (noteData) => api.post('/notes', noteData),
-  getMy: () => api.get('/notes/my'),
-  getPublic: () => api.get('/notes/public'),
-  getById: (id) => api.get(`/notes/${id}`),
-  update: (id, updates) => api.put(`/notes/${id}`, updates),
-  delete: (id) => api.delete(`/notes/${id}`),
-  search: (query) => api.get(`/notes/search/${query}`),
-};
-
-// Usage
-users.register({
+// Регистрация
+const { data: { user } } = await api.post('/users/register', {
   username: 'john_doe',
   email: 'john@example.com',
-  password: 'password123'
-}).then(response => console.log(response.data));
+  password: 'securepassword123'
+});
 
-notes.create({
-  title: 'My Note',
-  content: 'Note content',
+// Вход
+const { data: { token } } = await api.post('/users/login', {
+  email: 'john@example.com',
+  password: 'securepassword123'
+});
+
+// Сохранение токена
+localStorage.setItem('token', token);
+
+// Создание заметки
+const { data: { note } } = await api.post('/notes', {
+  title: 'Моя заметка',
+  content: 'Содержание',
   is_public: false
-}).then(response => console.log(response.data));
+});
 ```

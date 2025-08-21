@@ -1,7 +1,17 @@
 import type { Request, Response, NextFunction } from 'express';
 import pino from 'pino'
+import { verifyToken, extractTokenFromHeader, type JWTPayload } from '../utils/jwt.ts';
 
 const logger = pino();
+
+// Extend Request interface to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: JWTPayload;
+    }
+  }
+}
 
 // Request logging middleware
 export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
@@ -29,11 +39,22 @@ export const notFound = (req: Request, res: Response) => {
   });
 };
 
-// Authentication middleware (placeholder)
+// Authentication middleware
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
-  // TODO: Implement JWT authentication
-  logger.warn('Authentication middleware - not implemented yet');
-  next();
+  try {
+    const authHeader = req.headers.authorization;
+    const token = extractTokenFromHeader(authHeader);
+    const decoded = verifyToken(token);
+    
+    req.user = decoded;
+    next();
+  } catch (error: any) {
+    logger.warn('Authentication failed:', error.message);
+    return res.status(401).json({
+      error: 'Authentication Error',
+      message: error.message || 'Authentication required'
+    });
+  }
 };
 
 // Rate limiting middleware (placeholder)

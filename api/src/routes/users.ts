@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { UserRepository } from '../repositories/userRepository.ts';
 import { hashPassword, verifyPassword } from '../utils/password.ts';
+import { generateToken } from '../utils/jwt.ts';
 import type { CreateUserRequest } from '../types/database.ts';
 import pino from 'pino'
 
@@ -88,12 +89,20 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Return user data (without password)
+    // Generate JWT token
+    const token = generateToken({
+      userId: user.id,
+      email: user.email,
+      username: user.username
+    });
+
+    // Return user data (without password) and token
     const { password_hash, ...userData } = user;
     
     res.json({
       message: 'Login successful',
-      user: userData
+      user: userData,
+      token
     });
   } catch (error: any) {
     logger.error(error);

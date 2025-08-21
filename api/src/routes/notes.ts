@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { NoteRepository } from '../repositories/noteRepository.ts';
+import { authenticate } from '../middleware/index.ts';
 import type { CreateNoteRequest, UpdateNoteRequest } from '../types/database.ts';
 import pino from 'pino'
 
@@ -7,13 +8,12 @@ const logger = pino();
 const router = Router();
 
 // Create a new note
-router.post('/', async (req, res) => {
+router.post('/', authenticate, async (req, res) => {
   try {
     const { title, content, is_public }: CreateNoteRequest = req.body;
     
-    // For now, we'll use a default user ID (1)
-    // In a real app, this would come from authentication middleware
-    const userId = 1;
+    // Get user ID from authenticated request
+    const userId = req.user!.userId;
 
     // Validate input
     if (!title) {
@@ -25,8 +25,8 @@ router.post('/', async (req, res) => {
 
     const note = await NoteRepository.create(userId, {
       title,
-      content,
-      is_public
+      content: content || '',
+      is_public: is_public || false
     });
 
     res.status(201).json({
@@ -43,11 +43,10 @@ router.post('/', async (req, res) => {
 });
 
 // Get all notes for current user
-router.get('/my', async (req, res) => {
+router.get('/my', authenticate, async (req, res) => {
   try {
-    // For now, we'll use a default user ID (1)
-    // In a real app, this would come from authentication middleware
-    const userId = 1;
+    // Get user ID from authenticated request
+    const userId = req.user!.userId;
 
     const notes = await NoteRepository.findByUserId(userId);
     res.json({ notes });
@@ -75,7 +74,7 @@ router.get('/public', async (req, res) => {
 });
 
 // Get note by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticate, async (req, res) => {
   try {
     const noteId = parseInt(req.params.id);
     
@@ -86,9 +85,8 @@ router.get('/:id', async (req, res) => {
       });
     }
 
-    // For now, we'll use a default user ID (1)
-    // In a real app, this would come from authentication middleware
-    const userId = 1;
+    // Get user ID from authenticated request
+    const userId = req.user!.userId;
 
     const note = await NoteRepository.findById(noteId, userId);
     
@@ -110,7 +108,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update note
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticate, async (req, res) => {
   try {
     const noteId = parseInt(req.params.id);
     
@@ -124,14 +122,13 @@ router.put('/:id', async (req, res) => {
     const updates: UpdateNoteRequest = req.body;
     
     // Remove immutable fields from updates
-    delete (updates as any).id;
-    delete (updates as any).user_id;
-    delete (updates as any).created_at;
-    delete (updates as any).updated_at;
+    delete (updates as any)['id'];
+    delete (updates as any)['user_id'];
+    delete (updates as any)['created_at'];
+    delete (updates as any)['updated_at'];
 
-    // For now, we'll use a default user ID (1)
-    // In a real app, this would come from authentication middleware
-    const userId = 1;
+    // Get user ID from authenticated request
+    const userId = req.user!.userId;
 
     const note = await NoteRepository.update(noteId, userId, updates);
     
@@ -156,7 +153,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete note
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, async (req, res) => {
   try {
     const noteId = parseInt(req.params.id);
     
@@ -167,9 +164,8 @@ router.delete('/:id', async (req, res) => {
       });
     }
 
-    // For now, we'll use a default user ID (1)
-    // In a real app, this would come from authentication middleware
-    const userId = 1;
+    // Get user ID from authenticated request
+    const userId = req.user!.userId;
 
     const deleted = await NoteRepository.delete(noteId, userId);
     
@@ -193,7 +189,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Search notes
-router.get('/search/:query', async (req, res) => {
+router.get('/search/:query', authenticate, async (req, res) => {
   try {
     const { query } = req.params;
     
@@ -204,9 +200,8 @@ router.get('/search/:query', async (req, res) => {
       });
     }
 
-    // For now, we'll use a default user ID (1)
-    // In a real app, this would come from authentication middleware
-    const userId = 1;
+    // Get user ID from authenticated request
+    const userId = req.user!.userId;
 
     const notes = await NoteRepository.search(query, userId);
     res.json({ notes });
