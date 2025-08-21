@@ -24,8 +24,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
       
       {/* Контент */}
       {note.content && (
-        <div className="text-gray-700 mb-4 leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
-          {note.content}
+        <div dangerouslySetInnerHTML={{ __html: note.content }} className="text-gray-700 mb-4 leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
         </div>
       )}
       

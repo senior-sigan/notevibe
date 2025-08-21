@@ -132,7 +132,7 @@ const mockNotes = [
 export const notesApi = {
   getPublicNotes: async (): Promise<NotesResponse> => {
     try {
-      const response = await api.get('/notes/public');
+      const response = await api.get('/api/notes/public');
       return response.data;
     } catch (error) {
       // Возвращаем моковые данные если API недоступен
@@ -143,7 +143,7 @@ export const notesApi = {
 
   getMyNotes: async (): Promise<NotesResponse> => {
     try {
-      const response = await api.get('/notes/my');
+      const response = await api.get('/api/notes/my');
       return response.data;
     } catch (error) {
       // Возвращаем заметки только для пользователя с ID 1 (текущий пользователь)
@@ -154,7 +154,7 @@ export const notesApi = {
 
   getNoteById: async (id: number): Promise<NoteResponse> => {
     try {
-      const response = await api.get(`/notes/${id}`);
+      const response = await api.get(`/api/notes/${id}`);
       return response.data;
     } catch (error) {
       const note = mockNotes.find(n => n.id === id);
@@ -165,7 +165,7 @@ export const notesApi = {
 
   createNote: async (data: { title: string; content?: string; is_public?: boolean }) => {
     try {
-      const response = await api.post('/notes', data);
+      const response = await api.post('/api/notes', data);
       return response.data;
     } catch (error) {
       throw new Error('API недоступен');
@@ -174,7 +174,7 @@ export const notesApi = {
 
   updateNote: async (id: number, data: { title?: string; content?: string; is_public?: boolean }) => {
     try {
-      const response = await api.put(`/notes/${id}`, data);
+      const response = await api.put(`/api/notes/${id}`, data);
       return response.data;
     } catch (error) {
       throw new Error('API недоступен');
@@ -183,7 +183,7 @@ export const notesApi = {
 
   deleteNote: async (id: number) => {
     try {
-      const response = await api.delete(`/notes/${id}`);
+      const response = await api.delete(`/api/notes/${id}`);
       return response.data;
     } catch (error) {
       throw new Error('API недоступен');

@@ -88,7 +88,6 @@ export class NoteRepository {
              u.username as author_name
       FROM notes n
       JOIN users u ON n.user_id = u.id
-      WHERE n.is_public = true
       ORDER BY n.created_at DESC
     `;
 

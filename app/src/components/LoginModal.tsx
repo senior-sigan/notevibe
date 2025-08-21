@@ -124,7 +124,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               id="password"
               name="password"
               value={formData.password}
-              onChange={handleInputChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               placeholder="Введите пароль"
