@@ -57,13 +57,6 @@ function AppContent() {
         <main className="max-w-7xl mx-auto px-4 pb-12">
           <NotesList />
         </main>
-
-        {/* Футер */}
-        <footer className="text-center py-8 text-gray-500">
-          <p className="text-sm">
-            Сделано с ❤️ и аниме-стилем
-          </p>
-        </footer>
       </div>
 
       {/* Модальное окно входа */}
