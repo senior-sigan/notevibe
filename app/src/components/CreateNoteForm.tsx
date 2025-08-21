@@ -49,65 +49,54 @@ export const CreateNoteForm: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Создать новую заметку</h2>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-            Заголовок *
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Введите заголовок заметки..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
-            disabled={isSubmitting}
-          />
-        </div>
+    <div className="group relative bg-gradient-to-br from-pink-100 to-purple-100 rounded-2xl p-6 shadow-anime hover:shadow-anime-hover transition-all duration-300 transform hover:-translate-y-2 border-2 border-pink-200 hover:border-purple-300 mb-6">
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Заголовок заметки..."
+          className="w-full px-3 py-2 text-lg font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent placeholder-gray-400 focus:outline-none"
+          required
+          disabled={isSubmitting}
+        />
 
-        <div>
-          <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-            Содержание
-          </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Введите содержание заметки..."
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
-            disabled={isSubmitting}
-          />
-        </div>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Содержание заметки..."
+          rows={3}
+          className="w-full px-3 py-2 text-gray-700 placeholder-gray-400 focus:outline-none resize-none"
+          disabled={isSubmitting}
+        />
 
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="isPublic"
-            checked={isPublic}
-            onChange={(e) => setIsPublic(e.target.checked)}
-            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            disabled={isSubmitting}
-          />
-          <label htmlFor="isPublic" className="ml-2 block text-sm text-gray-700">
-            Публичная заметка
-          </label>
-        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="isPublic"
+              checked={isPublic}
+              onChange={(e) => setIsPublic(e.target.checked)}
+              className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-pink-300 rounded"
+              disabled={isSubmitting}
+            />
+            <label htmlFor="isPublic" className="ml-2 text-sm text-gray-500">
+              Публичная заметка
+            </label>
+          </div>
 
-        <div className="flex justify-end">
           <button
             type="submit"
             disabled={isSubmitting || !title.trim()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 text-white text-sm rounded-md hover:from-pink-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
           >
-            {isSubmitting ? 'Создаем...' : 'Создать заметку'}
+            {isSubmitting ? 'Создаем...' : 'Создать'}
           </button>
         </div>
       </form>
+      
+      {/* Декоративная рамка при наведении */}
+      <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-pink-300 transition-colors duration-300 pointer-events-none"></div>
     </div>
   );
 };
