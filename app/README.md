@@ -1,33 +1,67 @@
-Welcome to your new TanStack app! 
+# Notes App - Фронтенд
 
-# Getting Started
+Веб-приложение для создания и управления заметками с аутентификацией пользователей.
 
-To run this application:
+## Технологии
+
+- React 18
+- TypeScript
+- TanStack Router
+- TanStack Query
+- Tailwind CSS
+- Axios
+
+## Быстрый старт
+
+### Установка зависимостей
 
 ```bash
 npm install
+```
+
+### Запуск в режиме разработки
+
+```bash
 npm run start
 ```
 
-# Building For Production
-
-To build this application for production:
+### Сборка для продакшена
 
 ```bash
 npm run build
 ```
 
-## Testing
+## Аутентификация
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+Приложение использует JWT токены для аутентификации пользователей. Подробная документация доступна в [FRONTEND_AUTH.md](./FRONTEND_AUTH.md).
+
+### Основные возможности:
+
+- ✅ Регистрация и вход пользователей
+- ✅ Автоматическое сохранение токена в localStorage
+- ✅ Защищенные компоненты и роуты
+- ✅ Автоматическое добавление токена к API запросам
+- ✅ Обработка истечения токена
+
+### Тестирование
+
+Для тестирования аутентификации используйте файл `test-frontend-auth.html`:
+
+1. Откройте файл в браузере
+2. Убедитесь, что API сервер запущен на `http://localhost:4000`
+3. Протестируйте регистрацию, вход и создание заметок
+
+## Тестирование
+
+Этот проект использует [Vitest](https://vitest.dev/) для тестирования. Запустите тесты командой:
 
 ```bash
 npm run test
 ```
 
-## Styling
+## Стилизация
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+Этот проект использует [Tailwind CSS](https://tailwindcss.com/) для стилизации.
 
 
 ## Linting & Formatting

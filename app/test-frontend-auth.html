@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест фронтенд аутентификации</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Тест фронтенд аутентификации</h1>
+        
+        <div class="form-group">
+            <label for="apiUrl">API URL:</label>
+            <input type="text" id="apiUrl" value="http://localhost:4000/api" />
+        </div>
+
+        <h2>Регистрация</h2>
+        <div class="form-group">
+            <label for="regUsername">Имя пользователя:</label>
+            <input type="text" id="regUsername" value="testuser" />
+        </div>
+        <div class="form-group">
+            <label for="regEmail">Email:</label>
+            <input type="email" id="regEmail" value="test@example.com" />
+        </div>
+        <div class="form-group">
+            <label for="regPassword">Пароль:</label>
+            <input type="password" id="regPassword" value="password123" />
+        </div>
+        <button onclick="register()">Зарегистрироваться</button>
+
+        <h2>Вход</h2>
+        <div class="form-group">
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" value="test@example.com" />
+        </div>
+        <div class="form-group">
+            <label for="loginPassword">Пароль:</label>
+            <input type="password" id="loginPassword" value="password123" />
+        </div>
+        <button onclick="login()">Войти</button>
+
+        <h2>Тест API</h2>
+        <button onclick="testCreateNote()">Создать заметку</button>
+        <button onclick="testGetMyNotes()">Получить мои заметки</button>
+        <button onclick="testGetPublicNotes()">Получить публичные заметки</button>
+        <button onclick="clearToken()">Очистить токен</button>
+
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        let currentToken = localStorage.getItem('token');
+
+        function showResult(message, type = 'info') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = `result ${type}`;
+            resultDiv.style.display = 'block';
+        }
+
+        function getApiUrl() {
+            return document.getElementById('apiUrl').value;
+        }
+
+        async function register() {
+            try {
+                const response = await fetch(`${getApiUrl()}/users/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: document.getElementById('regUsername').value,
+                        email: document.getElementById('regEmail').value,
+                        password: document.getElementById('regPassword').value,
+                    }),
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ Регистрация успешна!\nПользователь: ${JSON.stringify(data.user, null, 2)}`, 'success');
+                } else {
+                    showResult(`❌ Ошибка регистрации: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Ошибка сети: ${error.message}`, 'error');
+            }
+        }
+
+        async function login() {
+            try {
+                const response = await fetch(`${getApiUrl()}/users/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: document.getElementById('loginEmail').value,
+                        password: document.getElementById('loginPassword').value,
+                    }),
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentToken = data.token;
+                    localStorage.setItem('token', data.token);
+                    showResult(`✅ Вход успешен!\nПользователь: ${JSON.stringify(data.user, null, 2)}\nТокен получен: ${data.token ? 'Да' : 'Нет'}`, 'success');
+                } else {
+                    showResult(`❌ Ошибка входа: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Ошибка сети: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCreateNote() {
+            if (!currentToken) {
+                showResult('❌ Сначала войдите в систему!', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/notes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`,
+                    },
+                    body: JSON.stringify({
+                        title: 'Тестовая заметка',
+                        content: 'Это тестовая заметка, созданная через фронтенд',
+                        is_public: false,
+                    }),
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ Заметка создана!\n${JSON.stringify(data.note, null, 2)}`, 'success');
+                } else {
+                    showResult(`❌ Ошибка создания заметки: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Ошибка сети: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetMyNotes() {
+            if (!currentToken) {
+                showResult('❌ Сначала войдите в систему!', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/notes/my`, {
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`,
+                    },
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ Мои заметки получены!\nКоличество: ${data.notes.length}\n${JSON.stringify(data.notes, null, 2)}`, 'success');
+                } else {
+                    showResult(`❌ Ошибка получения заметок: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Ошибка сети: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetPublicNotes() {
+            try {
+                const response = await fetch(`${getApiUrl()}/notes/public`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(`✅ Публичные заметки получены!\nКоличество: ${data.notes.length}\n${JSON.stringify(data.notes, null, 2)}`, 'success');
+                } else {
+                    showResult(`❌ Ошибка получения публичных заметок: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Ошибка сети: ${error.message}`, 'error');
+            }
+        }
+
+        function clearToken() {
+            currentToken = null;
+            localStorage.removeItem('token');
+            showResult('🗑️ Токен очищен', 'info');
+        }
+
+        // Показываем текущий статус при загрузке
+        if (currentToken) {
+            showResult(`🔑 Токен найден в localStorage: ${currentToken.substring(0, 20)}...`, 'info');
+        } else {
+            showResult('🔓 Токен не найден. Войдите в систему.', 'info');
+        }
+    </script>
+</body>
+</html>

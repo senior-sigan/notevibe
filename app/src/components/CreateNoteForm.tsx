@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notesApi } from '../api/notes';
+import { useAuth } from '../contexts/AuthContext';
 
 export const CreateNoteForm: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -9,6 +10,7 @@ export const CreateNoteForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const queryClient = useQueryClient();
+  const { isAuthenticated } = useAuth();
 
   const createNoteMutation = useMutation({
     mutationFn: notesApi.createNote,
@@ -47,6 +49,27 @@ export const CreateNoteForm: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="bg-gradient-to-br from-pink-100 to-purple-100 rounded-2xl p-6 shadow-anime border-2 border-pink-200 mb-6">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            🔐 Войдите в систему
+          </h3>
+          <p className="text-gray-600 mb-4">
+            Чтобы создавать заметки, необходимо войти в систему
+          </p>
+          <button
+            onClick={() => window.location.href = '/'}
+            className="px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-md hover:from-pink-700 hover:to-purple-700 transition-all duration-300"
+          >
+            Войти
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="group relative bg-gradient-to-br from-pink-100 to-purple-100 rounded-2xl p-6 shadow-anime hover:shadow-anime-hover transition-all duration-300 transform hover:-translate-y-2 border-2 border-pink-200 hover:border-purple-300 mb-6">

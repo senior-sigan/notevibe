@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { API_CONFIG, createApiUrl } from '../api/config';
+import { authApiClient } from '../api/auth';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -25,28 +25,25 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setError('');
 
     try {
-      const endpoint = isLogin ? API_CONFIG.endpoints.login : API_CONFIG.endpoints.register;
-      const response = await fetch(createApiUrl(endpoint), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Произошла ошибка');
-      }
-
+      let response;
+      
       if (isLogin) {
-        // Для входа
-        login(data.user);
+        // Вход в систему
+        response = await authApiClient.login({
+          email: formData.email,
+          password: formData.password,
+        });
       } else {
-        // Для регистрации
-        login(data.user);
+        // Регистрация
+        response = await authApiClient.register({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        });
       }
+
+      // Сохраняем пользователя и токен
+      login(response.user, response.token);
 
       onClose();
       setFormData({ username: '', email: '', password: '' });

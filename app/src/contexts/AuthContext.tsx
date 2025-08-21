@@ -1,17 +1,14 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-}
+import { getToken, removeToken, isTokenValid } from '../api/auth';
+import type { User } from '../api/auth';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (userData: User) => void;
+  login: (userData: User, token: string) => void;
   logout: () => void;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,19 +18,45 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(() => {
-    // Восстанавливаем пользователя из localStorage при инициализации
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = (userData: User) => {
+  // Проверяем токен при инициализации
+  useEffect(() => {
+    const initializeAuth = () => {
+      const token = getToken();
+      const savedUser = localStorage.getItem('user');
+      
+      if (token && savedUser && isTokenValid(token)) {
+        try {
+          const userData = JSON.parse(savedUser);
+          setUser(userData);
+        } catch {
+          // Если данные пользователя повреждены, очищаем все
+          removeToken();
+          localStorage.removeItem('user');
+        }
+      } else {
+        // Если токен недействителен, очищаем все
+        removeToken();
+        localStorage.removeItem('user');
+      }
+      
+      setIsLoading(false);
+    };
+
+    initializeAuth();
+  }, []);
+
+  const login = (userData: User, token: string) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', token);
   };
 
   const logout = () => {
     setUser(null);
+    removeToken();
     localStorage.removeItem('user');
   };
 
@@ -42,6 +65,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isAuthenticated: !!user,
     login,
     logout,
+    isLoading,
   };
 
   return (

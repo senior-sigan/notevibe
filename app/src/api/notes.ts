@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_CONFIG } from './config';
+import { getToken } from './auth';
 import type { NoteResponse, NotesResponse } from '../types/note';
 
 const api = axios.create({
@@ -8,6 +9,30 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Добавляем интерцептор для автоматического добавления токена
+api.interceptors.request.use((config) => {
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Добавляем интерцептор для обработки ошибок аутентификации
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Токен истек или недействителен
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Можно добавить редирект на страницу входа
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Моковые данные для демонстрации
 const mockNotes = [
