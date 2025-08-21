@@ -22,8 +22,8 @@ RUN chown -R nodejs:nodejs /app
 
 USER nodejs
 
-EXPOSE 3000
+EXPOSE 4000
 
-ENV PORT=3000
+ENV PORT=4000
 
 CMD ["node", "src/index.ts"]

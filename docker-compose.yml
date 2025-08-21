@@ -24,9 +24,9 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: development
-      PORT: 3000
+      PORT: 4000
       DATABASE_URL: postgresql://notes_user:notes_password@db:5432/notes_db
-      CORS_ORIGIN: http://localhost:3000
+      CORS_ORIGIN: http://localhost:8080
       LOG_LEVEL: info
     depends_on:
       db:
@@ -37,7 +37,7 @@ services:
       context: ./app
       dockerfile: Dockerfile
       args:
-        API_URL: http://api:3000/api
+        API_URL: /api
     restart: unless-stopped
     ports:
       - "8080:80"

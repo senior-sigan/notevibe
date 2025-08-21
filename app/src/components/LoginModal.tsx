@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { API_CONFIG, createApiUrl } from '../api/config';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -24,8 +25,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setError('');
 
     try {
-      const endpoint = isLogin ? '/api/users/login' : '/api/users/register';
-      const response = await fetch(`http://localhost:3001${endpoint}`, {
+      const endpoint = isLogin ? API_CONFIG.endpoints.login : API_CONFIG.endpoints.register;
+      const response = await fetch(createApiUrl(endpoint), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

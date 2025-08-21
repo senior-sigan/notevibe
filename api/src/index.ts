@@ -10,7 +10,7 @@ import routes from './routes/index.ts';
 const logger = pino();
 
 const app = express();
-const PORT = process.env['PORT'] || 3001;
+const PORT = process.env['PORT'] || 4000;
 
 // Middleware
 app.use(helmet()); // Security headers

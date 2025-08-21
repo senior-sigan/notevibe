@@ -12,7 +12,7 @@ WORKDIR /app
 COPY . .
 
 ARG API_URL
-ENV VITE_API_URL=${API_URL:-http://localhost:3000/api}
+ENV VITE_API_URL=${API_URL:-/api}
 
 RUN npm run build
 
