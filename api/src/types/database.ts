@@ -53,6 +53,7 @@ export interface NoteResponse {
   is_public: boolean;
   created_at: Date;
   updated_at: Date;
+  author_name: string;
 }
 
 // Database query result types

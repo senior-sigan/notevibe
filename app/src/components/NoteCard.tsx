@@ -35,9 +35,14 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
           <span className={`w-2 h-2 rounded-full ${note.is_public ? 'bg-green-400' : 'bg-blue-400'}`}></span>
           {note.is_public ? 'Публичная заметка' : 'Приватная заметка'}
         </span>
-        <span className="text-xs">
-          {formatDate(note.created_at)}
-        </span>
+        <div className="flex flex-col items-end gap-1">
+          <span className="text-xs">
+            {formatDate(note.created_at)}
+          </span>
+          <span className="text-xs text-gray-400">
+            Автор: {note.author_name}
+          </span>
+        </div>
       </div>
       
       {/* Декоративная рамка при наведении */}

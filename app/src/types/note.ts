@@ -6,6 +6,7 @@ export interface Note {
   is_public: boolean;
   created_at: string;
   updated_at: string;
+  author_name: string;
 }
 
 export interface NotesResponse {

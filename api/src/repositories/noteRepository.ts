@@ -14,7 +14,14 @@ export class NoteRepository {
 
     try {
       const result = await query(createNoteQuery, [userId, title, content, is_public]);
-      return result.rows[0];
+      const note = result.rows[0];
+      
+      // Get author name
+      const authorQuery = `SELECT username FROM users WHERE id = $1`;
+      const authorResult = await query(authorQuery, [userId]);
+      note.author_name = authorResult.rows[0].username;
+      
+      return note;
     } catch (error) {
       throw new Error('Failed to create note', { cause: error });
     }
@@ -28,17 +35,21 @@ export class NoteRepository {
     if (userId) {
       // User can only see their own notes or public notes
       findNoteQuery = `
-        SELECT id, user_id, title, content, is_public, created_at, updated_at
-        FROM notes
-        WHERE id = $1 AND (user_id = $2 OR is_public = true)
+        SELECT n.id, n.user_id, n.title, n.content, n.is_public, n.created_at, n.updated_at,
+               u.username as author_name
+        FROM notes n
+        JOIN users u ON n.user_id = u.id
+        WHERE n.id = $1 AND (n.user_id = $2 OR n.is_public = true)
       `;
       params = [id, userId];
     } else {
       // Public notes only
       findNoteQuery = `
-        SELECT id, user_id, title, content, is_public, created_at, updated_at
-        FROM notes
-        WHERE id = $1 AND is_public = true
+        SELECT n.id, n.user_id, n.title, n.content, n.is_public, n.created_at, n.updated_at,
+               u.username as author_name
+        FROM notes n
+        JOIN users u ON n.user_id = u.id
+        WHERE n.id = $1 AND n.is_public = true
       `;
       params = [id];
     }
@@ -54,10 +65,12 @@ export class NoteRepository {
   // Get all notes for a user
   static async findByUserId(userId: number): Promise<NoteResponse[]> {
     const findNotesQuery = `
-      SELECT id, user_id, title, content, is_public, created_at, updated_at
-      FROM notes
-      WHERE user_id = $1
-      ORDER BY updated_at DESC
+      SELECT n.id, n.user_id, n.title, n.content, n.is_public, n.created_at, n.updated_at,
+             u.username as author_name
+      FROM notes n
+      JOIN users u ON n.user_id = u.id
+      WHERE n.user_id = $1
+      ORDER BY n.updated_at DESC
     `;
 
     try {
@@ -71,10 +84,12 @@ export class NoteRepository {
   // Get all public notes
   static async findPublicNotes(): Promise<NoteResponse[]> {
     const findPublicNotesQuery = `
-      SELECT id, user_id, title, content, is_public, created_at, updated_at
-      FROM notes
-      WHERE is_public = true
-      ORDER BY created_at DESC
+      SELECT n.id, n.user_id, n.title, n.content, n.is_public, n.created_at, n.updated_at,
+             u.username as author_name
+      FROM notes n
+      JOIN users u ON n.user_id = u.id
+      WHERE n.is_public = true
+      ORDER BY n.created_at DESC
     `;
 
     try {
@@ -102,7 +117,16 @@ export class NoteRepository {
 
     try {
       const result = await query(updateNoteQuery, values);
-      return result.rows[0] || null;
+      if (!result.rows[0]) return null;
+      
+      const note = result.rows[0];
+      
+      // Get author name
+      const authorQuery = `SELECT username FROM users WHERE id = $1`;
+      const authorResult = await query(authorQuery, [userId]);
+      note.author_name = authorResult.rows[0].username;
+      
+      return note;
     } catch (error) {
       throw new Error('Failed to update note', { cause: error });
     }
@@ -117,7 +141,7 @@ export class NoteRepository {
 
     try {
       const result = await query(deleteNoteQuery, [id, userId]);
-      return result.rowCount > 0;
+      return (result.rowCount || 0) > 0;
     } catch (error) {
       throw new Error('Failed to delete note', { cause: error });
     }
@@ -131,21 +155,25 @@ export class NoteRepository {
     if (userId) {
       // User can search their own notes and public notes
       searchQuery = `
-        SELECT id, user_id, title, content, is_public, created_at, updated_at
-        FROM notes
-        WHERE (user_id = $1 OR is_public = true)
-          AND (title ILIKE $2 OR content ILIKE $2)
-        ORDER BY updated_at DESC
+        SELECT n.id, n.user_id, n.title, n.content, n.is_public, n.created_at, n.updated_at,
+               u.username as author_name
+        FROM notes n
+        JOIN users u ON n.user_id = u.id
+        WHERE (n.user_id = $1 OR n.is_public = true)
+          AND (n.title ILIKE $2 OR n.content ILIKE $2)
+        ORDER BY n.updated_at DESC
       `;
       params = [userId, `%${query}%`];
     } else {
       // Public notes only
       searchQuery = `
-        SELECT id, user_id, title, content, is_public, created_at, updated_at
-        FROM notes
-        WHERE is_public = true
-          AND (title ILIKE $1 OR content ILIKE $1)
-        ORDER BY created_at DESC
+        SELECT n.id, n.user_id, n.title, n.content, n.is_public, n.created_at, n.updated_at,
+               u.username as author_name
+        FROM notes n
+        JOIN users u ON n.user_id = u.id
+        WHERE n.is_public = true
+          AND (n.title ILIKE $1 OR n.content ILIKE $1)
+        ORDER BY n.created_at DESC
       `;
       params = [`%${query}%`];
     }
@@ -168,7 +196,7 @@ export class NoteRepository {
 
     try {
       const result = await query(countQuery, [userId]);
-      return parseInt(result.rows[0].count);
+      return Number(result.rows[0].count);
     } catch (error) {
       throw new Error('Failed to count user notes', { cause: error });
     }
