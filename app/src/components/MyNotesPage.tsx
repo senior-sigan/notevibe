@@ -1,8 +1,8 @@
-import { MyNotesList } from './MyNotesList';
 import { useAuth } from '../contexts/AuthContext';
+import { MyNotesList } from './MyNotesList';
 
 export const MyNotesPage: React.FC = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, openLoginModal } = useAuth();
 
   if (isLoading) {
     return (
@@ -25,7 +25,7 @@ export const MyNotesPage: React.FC = () => {
             Для просмотра ваших заметок необходимо войти в систему
           </p>
           <button
-            onClick={() => window.location.href = '/'}
+            onClick={openLoginModal}
             className="px-6 py-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-lg hover:from-pink-700 hover:to-purple-700 transition-all duration-300"
           >
             Войти в систему

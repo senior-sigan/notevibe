@@ -1,11 +1,9 @@
 import { Link } from '@tanstack/react-router'
 import { useAuth } from '../contexts/AuthContext';
-import { useState } from 'react';
 import LoginModal from './LoginModal';
 
 export default function Header() {
-  const { user, isAuthenticated, logout, isLoading } = useAuth();
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const { user, isAuthenticated, logout, isLoading, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -50,7 +48,7 @@ export default function Header() {
             </>
           ) : (
             <button
-              onClick={() => setIsLoginModalOpen(true)}
+              onClick={openLoginModal}
               className="px-3 py-1 text-sm bg-pink-500 text-white rounded hover:bg-pink-600 transition-colors"
             >
               Войти
@@ -61,7 +59,7 @@ export default function Header() {
 
       <LoginModal
         isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
+        onClose={closeLoginModal}
       />
     </>
   );

@@ -10,7 +10,7 @@ export const CreateNoteForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, openLoginModal } = useAuth();
 
   const createNoteMutation = useMutation({
     mutationFn: notesApi.createNote,
@@ -61,7 +61,7 @@ export const CreateNoteForm: React.FC = () => {
             Чтобы создавать заметки, необходимо войти в систему
           </p>
           <button
-            onClick={() => window.location.href = '/'}
+            onClick={openLoginModal}
             className="px-4 py-2 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-md hover:from-pink-700 hover:to-purple-700 transition-all duration-300"
           >
             Войти

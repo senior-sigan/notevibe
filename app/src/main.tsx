@@ -9,7 +9,6 @@ import {
   createRouter,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { useState } from 'react'
 
 import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
@@ -31,19 +30,14 @@ const queryClient = new QueryClient({
 
 // Корневой компонент с сайдбаром и модальным окном
 function RootComponent() {
-  const { isAuthenticated, logout } = useAuth()
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const { isAuthenticated, logout, isLoginModalOpen, openLoginModal, closeLoginModal } = useAuth()
 
   const handleLogin = () => {
-    setIsLoginModalOpen(true)
+    openLoginModal()
   }
 
   const handleLogout = () => {
     logout()
-  }
-
-  const handleCloseLoginModal = () => {
-    setIsLoginModalOpen(false)
   }
 
   return (
@@ -63,7 +57,7 @@ function RootComponent() {
       {/* Модальное окно входа */}
       <LoginModal 
         isOpen={isLoginModalOpen}
-        onClose={handleCloseLoginModal}
+        onClose={closeLoginModal}
       />
       
       <TanStackRouterDevtools />

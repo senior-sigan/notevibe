@@ -42,10 +42,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         });
       }
 
-      // Сохраняем пользователя и токен
+      // Сохраняем пользователя и токен через контекст
       login(response.user, response.token);
 
-      onClose();
+      // Очищаем форму
       setFormData({ username: '', email: '', password: '' });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Произошла ошибка');
