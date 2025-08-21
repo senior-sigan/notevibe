@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
   Outlet,
   RouterProvider,
@@ -8,28 +9,88 @@ import {
   createRouter,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { useState } from 'react'
 
 import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 
-import App from './App.tsx'
+import { PublicNotesPage } from './components/PublicNotesPage'
+import { MyNotesPage } from './components/MyNotesPage'
+import Sidebar from './components/Sidebar'
+import LoginModal from './components/LoginModal'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+})
+
+// Корневой компонент с сайдбаром и модальным окном
+function RootComponent() {
+  const { isAuthenticated, logout } = useAuth()
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+
+  const handleLogin = () => {
+    setIsLoginModalOpen(true)
+  }
+
+  const handleLogout = () => {
+    logout()
+  }
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false)
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+      {/* Тулбар */}
+      <Sidebar 
+        isAuthenticated={isAuthenticated}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
+      />
+
+      {/* Основной контент */}
+      <div className="ml-64 relative z-10">
+        <Outlet />
+      </div>
+
+      {/* Модальное окно входа */}
+      <LoginModal 
+        isOpen={isLoginModalOpen}
+        onClose={handleCloseLoginModal}
+      />
+      
+      <TanStackRouterDevtools />
+    </div>
+  )
+}
 
 const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
+  component: RootComponent,
 })
 
-const indexRoute = createRoute({
+// Создаем роут для главной страницы (публичные заметки)
+const publicNotesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: App,
+  component: PublicNotesPage,
 })
 
-const routeTree = rootRoute.addChildren([indexRoute])
+// Создаем роут для страницы "Мои заметки"
+const myNotesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/my-notes',
+  component: MyNotesPage,
+})
+
+// Создаем роутер
+const routeTree = rootRoute.addChildren([publicNotesRoute, myNotesRoute])
 
 const router = createRouter({
   routeTree,
@@ -51,7 +112,11 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </QueryClientProvider>
     </StrictMode>,
   )
 }

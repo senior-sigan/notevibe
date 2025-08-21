@@ -24,16 +24,16 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
       
       {/* Контент */}
       {note.content && (
-        <p className="text-gray-700 mb-4 leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
+        <div className="text-gray-700 mb-4 leading-relaxed line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
           {note.content}
-        </p>
+        </div>
       )}
       
       {/* Метаданные */}
       <div className="flex items-center justify-between text-sm text-gray-500">
         <span className="flex items-center gap-1">
-          <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-          Публичная заметка
+          <span className={`w-2 h-2 rounded-full ${note.is_public ? 'bg-green-400' : 'bg-blue-400'}`}></span>
+          {note.is_public ? 'Публичная заметка' : 'Приватная заметка'}
         </span>
         <span className="text-xs">
           {formatDate(note.created_at)}

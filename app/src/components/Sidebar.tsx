@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { useAuth } from '../contexts/AuthContext';
 
 interface SidebarProps {
@@ -26,8 +27,8 @@ export default function Sidebar({ isAuthenticated, onLogin, onLogout }: SidebarP
       <nav className="flex-1 p-4">
         <ul className="space-y-2">
           <li>
-            <a 
-              href="/" 
+            <Link 
+              to="/" 
               className="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,31 +36,31 @@ export default function Sidebar({ isAuthenticated, onLogin, onLogout }: SidebarP
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z" />
               </svg>
               Главная
-            </a>
+            </Link>
           </li>
           {isAuthenticated && (
             <li>
-              <a 
-                href="/my-notes" 
+              <Link 
+                to="/my-notes" 
                 className="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Мои заметки
-              </a>
+              </Link>
             </li>
           )}
           <li>
-            <a 
-              href="/public-notes" 
+            <Link 
+              to="/" 
               className="flex items-center px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               Публичные заметки
-            </a>
+            </Link>
           </li>
         </ul>
       </nav>
