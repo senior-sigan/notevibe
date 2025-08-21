@@ -3,7 +3,7 @@ FROM node:24-trixie-slim AS base
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm ci --only=production
+RUN npm ci
 
 FROM base AS builder
 
